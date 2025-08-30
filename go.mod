@@ -11,7 +11,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/tidwall/pretty v1.2.1
 	github.com/wsva/lib_go v1.0.6
-	github.com/wsva/lib_go_db v1.1.3
+	github.com/wsva/lib_go_db v1.1.4
 	golang.org/x/crypto v0.40.0
 )
 
