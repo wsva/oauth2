@@ -18,65 +18,65 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.PathPrefix("/css/").Handler(http.StripPrefix("/css/",
+	router.PathPrefix("/oauth2/css/").Handler(http.StripPrefix("/oauth2/css/",
 		http.FileServer(http.Dir(filepath.Join(Basepath, "template/css/")))))
-	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/",
+	router.PathPrefix("/oauth2/js/").Handler(http.StripPrefix("/oauth2/js/",
 		http.FileServer(http.Dir(filepath.Join(Basepath, "template/js/")))))
 
-	router.Methods("POST").Path("/signup").Handler(
+	router.Methods("POST").Path("/oauth2/signup").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleSignUp),
 		))
-	router.Methods("POST").Path("/signin").Handler(
+	router.Methods("POST").Path("/oauth2/signin").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleSignIn),
 		))
-	router.Methods("POST").Path("/token").Handler(
+	router.Methods("POST").Path("/oauth2/token").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleToken),
 		))
-	router.Methods("GET").Path("/authorize").Handler(
+	router.Methods("GET").Path("/oauth2/authorize").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleAuthorize),
 		))
-	router.Methods("GET").Path("/userinfo").Handler(
+	router.Methods("GET").Path("/oauth2/userinfo").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleUserInfo),
 		))
-	router.Methods("POST").Path("/revoke").Handler(
+	router.Methods("POST").Path("/oauth2/revoke").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleRevoke),
 		))
-	router.Methods("POST").Path("/introspect").Handler(
+	router.Methods("POST").Path("/oauth2/introspect").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleIntrospect),
 		))
-	router.Methods("GET").Path("/.well-known/jwks.json").Handler(
+	router.Methods("GET").Path("/oauth2/.well-known/jwks.json").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleJwks),
 		))
-	router.Methods("GET", "POST").Path("/logout").Handler(
+	router.Methods("GET", "POST").Path("/oauth2/logout").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleLogout),
 		))
-	router.Methods("POST").Path("/account/update").Handler(
+	router.Methods("POST").Path("/oauth2/account/update").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleAccountUpdate),
 		))
-	router.Methods("GET").Path("/account/all").Handler(
+	router.Methods("GET").Path("/oauth2/account/all").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleAccountAll),
 		))
 
-	router.Methods("GET").Path("/register").Handler(
+	router.Methods("GET").Path("/oauth2/register").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleRegister),
 		))
-	router.Methods("GET").Path("/login").Handler(
+	router.Methods("GET").Path("/oauth2/login").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleLogin),
 		))
-	router.Methods("GET").Path("/dashboard").Handler(
+	router.Methods("GET").Path("/oauth2/dashboard").Handler(
 		negroni.New(
 			negroni.HandlerFunc(handleDashboard),
 		))

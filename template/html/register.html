@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <title>Register</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link type="text/css" rel="stylesheet" href="css/bootstrap-5.3.8.min.css">
-    <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap-5.3.8.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/oauth2/css/bootstrap-5.3.8.min.css">
+    <script type="text/javascript" src="/oauth2/js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/oauth2/js/bootstrap-5.3.8.min.js"></script>
     <style>
         body {
             background-color: #f5f5f5;
@@ -69,15 +69,6 @@
                 return params.get(key);
             }
 
-            function getPrefixPath() {
-                const path = window.location.pathname;
-                const segments = path.split('/').filter(Boolean);
-                segments.pop();
-                return '/' + segments.join('/');
-            }
-            const prefixPath = getPrefixPath();
-            const urlBase = window.location.origin + (prefixPath == "/" ? "" : prefixPath);
-
             $('#register-form').submit(function (e) {
                 e.preventDefault();
 
@@ -93,13 +84,13 @@
                 };
 
                 $.ajax({
-                    url: `${urlBase}/signup`,
+                    url: '/oauth2/signup',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function (res) {
                         if (res.success) {
-                            const returnTo = getQueryParam("return_to") || `${urlBase}/login`;
+                            const returnTo = getQueryParam("return_to") || '/oauth2/login';
                             window.location.href = returnTo;
                         } else {
                             $('#alert-box').text("Registration failed").removeClass('d-none').show();

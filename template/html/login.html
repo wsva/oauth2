@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <title>OAuth2</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link type="text/css" rel="stylesheet" href="css/bootstrap-5.3.8.min.css">
-    <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap-5.3.8.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/oauth2/css/bootstrap-5.3.8.min.css">
+    <script type="text/javascript" src="/oauth2/js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/oauth2/js/bootstrap-5.3.8.min.js"></script>
     <style>
         body {
             background-color: #f5f5f5;
@@ -50,16 +50,7 @@
 
     <script>
         $(function () {
-            function getPrefixPath() {
-                const path = window.location.pathname;
-                const segments = path.split('/').filter(Boolean);
-                segments.pop();
-                return '/' + segments.join('/');
-            }
-            const prefixPath = getPrefixPath();
-            const urlBase = window.location.origin + (prefixPath == "/" ? "" : prefixPath);
-
-            $('#register').attr('href', `${urlBase}/register?return_to=${encodeURIComponent(window.location.href)}`);
+            $('#register').attr('href', `/oauth2/register?return_to=${encodeURIComponent(window.location.href)}`);
 
             $('#login-form').submit(function (e) {
                 e.preventDefault();
@@ -73,13 +64,13 @@
                 };
 
                 $.ajax({
-                    url: `${urlBase}/signin`,
+                    url: '/oauth2/signin',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function (response) {
                         if (response.success) {
-                            const returnTo = getQueryParam("return_to") || `${urlBase}/dashboard`;
+                            const returnTo = getQueryParam("return_to") || '/oauth2/dashboard';
                             window.location.href = returnTo;
                         } else {
                             $('#alert-box').text("login failed").removeClass('d-none').show();

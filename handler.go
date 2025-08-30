@@ -184,7 +184,7 @@ func handleAuthorize(w http.ResponseWriter, r *http.Request, next http.HandlerFu
 		return
 	}
 
-	redirectURL := getPrefix(r) + "/login?return_to=" + url.QueryEscape(r.URL.String())
+	redirectURL := "/oauth2/login?return_to=" + url.QueryEscape(r.URL.String())
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
@@ -316,7 +316,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 			return
 		}
 
-		http.Redirect(w, r, getPrefix(r)+"/dashboard", http.StatusSeeOther)
+		http.Redirect(w, r, "/oauth2/dashboard", http.StatusSeeOther)
 		return
 	}
 	http.ServeFile(w, r, filepath.Join(Basepath, "template/html/login.html"))
@@ -324,7 +324,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 
 func handleRegister(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	if CheckAuthorization(r, true).Authorized {
-		http.Redirect(w, r, getPrefix(r)+"/dashboard", http.StatusSeeOther)
+		http.Redirect(w, r, "/oauth2/dashboard", http.StatusSeeOther)
 		return
 	}
 	http.ServeFile(w, r, filepath.Join(Basepath, "template/html/register.html"))
@@ -365,12 +365,4 @@ func handleAccountAll(w http.ResponseWriter, r *http.Request, next http.HandlerF
 		},
 	}
 	resp.DoResponse(w)
-}
-
-func getPrefix(r *http.Request) string {
-	prefix := filepath.Dir(r.URL.Path)
-	if prefix == "." || prefix == "/" {
-		prefix = ""
-	}
-	return prefix
 }

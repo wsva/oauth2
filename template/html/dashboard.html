@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link type="text/css" rel="stylesheet" href="css/bootstrap-5.3.8.min.css">
-    <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap-5.3.8.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/oauth2/css/bootstrap-5.3.8.min.css">
+    <script type="text/javascript" src="/oauth2/js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/oauth2/js/bootstrap-5.3.8.min.js"></script>
     <script>
         setTimeout(function () { location.reload(); }, 60000);
     </script>
@@ -75,16 +75,7 @@
 
     <script>
         $(function () {
-            function getPrefixPath() {
-                const path = window.location.pathname;
-                const segments = path.split('/').filter(Boolean);
-                segments.pop();
-                return '/' + segments.join('/');
-            }
-            const prefixPath = getPrefixPath();
-            const urlBase = window.location.origin + (prefixPath == "/" ? "" : prefixPath);
-
-            $.getJSON(`${urlBase}/userinfo`, function (data) {
+            $.getJSON('/oauth2/userinfo', function (data) {
                 $("#user-email").text(data.email);
                 $("#user-nickname").text(data.name);
             }).fail(function () {
@@ -92,8 +83,8 @@
             });
 
             $('#logout-btn').click(function () {
-                $.post(`${urlBase}/logout`, function () {
-                    window.location.href = `${urlBase}/login`;
+                $.post('/oauth2/logout', function () {
+                    window.location.href = '/oauth2/login';
                 }).fail(function () {
                     alert("Logout failed");
                 });
