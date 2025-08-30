@@ -4,7 +4,7 @@ metadata:
   name: oauth2
   namespace: als
   annotations:
-    build: "20250830_145513"
+    build: "20250830_150133"
 spec:
   replicas: 1
   selector:
@@ -15,7 +15,7 @@ spec:
       labels:
         app: oauth2
       annotations:
-        build: "20250830_145513"
+        build: "20250830_150133"
     spec:
       containers:
         - name: oauth2
@@ -69,9 +69,11 @@ spec:
     app: oauth2
   type: NodePort
   ports:
-    - port: 22001
+    - name: http
+      port: 22001
       targetPort: 22001
       nodePort: 22001
-    - port: 33001
+    - name: https
+      port: 33001
       targetPort: 33001
       nodePort: 33001
