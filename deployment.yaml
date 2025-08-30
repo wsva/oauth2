@@ -41,7 +41,8 @@ spec:
             - -c
             - |
               set -e
-              apk add --no-cache git
+              apt update
+              apt install -y git
               git clone https://github.com/wsva/oauth2 /oauth2
               sed -i "s/POSTGRES_PASSWORD/${POSTGRES_PASSWORD}/g" /oauth2/config/prod.json
               sed -i "s/AES_KEY/${AES_KEY}/g" /oauth2/config/prod.json
