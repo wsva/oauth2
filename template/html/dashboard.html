@@ -83,7 +83,7 @@
             }
             const urlBase = window.location.origin + getPrefixPath();
 
-            $.getJSON("/userinfo", function (data) {
+            $.getJSON(`${urlBase}/userinfo`, function (data) {
                 $("#user-email").text(data.email);
                 $("#user-nickname").text(data.name);
             }).fail(function () {
@@ -91,7 +91,7 @@
             });
 
             $('#logout-btn').click(function () {
-                $.post("/logout", function () {
+                $.post(`${urlBase}/logout`, function () {
                     window.location.href = `${urlBase}/login`;
                 }).fail(function () {
                     alert("Logout failed");

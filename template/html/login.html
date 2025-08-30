@@ -72,12 +72,11 @@
                 };
 
                 $.ajax({
-                    url: '/signin',
+                    url: `${urlBase}/signin`,
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function (response) {
-                        console.log(response)
                         if (response.success) {
                             const returnTo = getQueryParam("return_to") || `${urlBase}/dashboard`;
                             window.location.href = returnTo;
