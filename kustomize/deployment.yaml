@@ -4,7 +4,7 @@ metadata:
   name: oauth2
   namespace: als
   annotations:
-    build: "20250830_165405"
+    build: "20250830_184947"
 spec:
   replicas: 1
   selector:
@@ -15,7 +15,7 @@ spec:
       labels:
         app: oauth2
       annotations:
-        build: "20250830_165405"
+        build: "20250830_184947"
     spec:
       containers:
         - name: oauth2

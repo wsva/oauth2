@@ -56,7 +56,8 @@
                 segments.pop();
                 return '/' + segments.join('/');
             }
-            const urlBase = window.location.origin + getPrefixPath();
+            const prefixPath = getPrefixPath();
+            const urlBase = window.location.origin + (prefixPath == "/" ? "" : prefixPath);
 
             $('#register').attr('href', `${urlBase}/register?return_to=${encodeURIComponent(window.location.href)}`);
 

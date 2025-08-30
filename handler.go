@@ -183,7 +183,8 @@ func handleAuthorize(w http.ResponseWriter, r *http.Request, next http.HandlerFu
 		http.Redirect(w, r, fmt.Sprintf("%s?code=%s&state=%v", redirect_uri, code, state), http.StatusFound)
 		return
 	}
-	redirectURL := "/login?return_to=" + url.QueryEscape(r.URL.String())
+
+	redirectURL := getPrefix(r) + "/login?return_to=" + url.QueryEscape(r.URL.String())
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
@@ -309,7 +310,13 @@ func handleAccountUpdate(w http.ResponseWriter, r *http.Request, next http.Handl
 // login page in browser
 func handleLogin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	if CheckAuthorization(r, true).Authorized {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		returnTo := r.URL.Query().Get("return_to")
+		if returnTo != "" {
+			http.Redirect(w, r, returnTo, http.StatusSeeOther)
+			return
+		}
+
+		http.Redirect(w, r, getPrefix(r)+"/dashboard", http.StatusSeeOther)
 		return
 	}
 	http.ServeFile(w, r, filepath.Join(Basepath, "template/html/login.html"))
@@ -317,7 +324,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 
 func handleRegister(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	if CheckAuthorization(r, true).Authorized {
-		http.Redirect(w, r, "/", http.StatusFound)
+		http.Redirect(w, r, getPrefix(r)+"/dashboard", http.StatusSeeOther)
 		return
 	}
 	http.ServeFile(w, r, filepath.Join(Basepath, "template/html/register.html"))
@@ -358,4 +365,12 @@ func handleAccountAll(w http.ResponseWriter, r *http.Request, next http.HandlerF
 		},
 	}
 	resp.DoResponse(w)
+}
+
+func getPrefix(r *http.Request) string {
+	prefix := filepath.Dir(r.URL.Path)
+	if prefix == "." || prefix == "/" {
+		prefix = ""
+	}
+	return prefix
 }

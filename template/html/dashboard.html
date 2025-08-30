@@ -81,7 +81,8 @@
                 segments.pop();
                 return '/' + segments.join('/');
             }
-            const urlBase = window.location.origin + getPrefixPath();
+            const prefixPath = getPrefixPath();
+            const urlBase = window.location.origin + (prefixPath == "/" ? "" : prefixPath);
 
             $.getJSON(`${urlBase}/userinfo`, function (data) {
                 $("#user-email").text(data.email);
