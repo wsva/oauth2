@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth2
+  namespace: als
+  annotations:
+    build: "BUILD_TIME"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth2
+  template:
+    metadata:
+      labels:
+        app: oauth2
+      annotations:
+        build: "BUILD_TIME"
+    spec:
+      containers:
+        - name: oauth2
+          image: debian:12.11-slim
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
+            - name: AES_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aes-key
+                  key: AES_KEY
+            - name: AES_IV
+              valueFrom:
+                secretKeyRef:
+                  name: aes-iv
+                  key: AES_IV
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              apk add --no-cache git
+              git clone https://github.com/wsva/oauth2 /oauth2
+              sed -i "s/POSTGRES_PASSWORD/${POSTGRES_PASSWORD}/g" /oauth2/config/prod.json
+              sed -i "s/AES_KEY/${AES_KEY}/g" /oauth2/config/prod.json
+              sed -i "s/AES_IV/${AES_IV}/g" /oauth2/config/prod.json
+              cp /oauth2/config/prod.json /oauth2/config/auth_service_config.json
+              /oauth2/wsva_oauth2
+          ports:
+            - containerPort: 22001
+            - containerPort: 33001
+          volumeMounts:
+            - name: ssl
+              mountPath: /ssl
+      volumes:
+        - name: ssl
+          hostPath:
+            path: /als/ssl
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauth2
+  namespace: als
+spec:
+  selector:
+    app: oauth2
+  type: NodePort
+  ports:
+    - port: 22001
+      targetPort: 22001
+      nodePort: 22001
+    - port: 33001
+      targetPort: 33001
+      nodePort: 33001

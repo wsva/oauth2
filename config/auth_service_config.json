@@ -1,0 +1,21 @@
+{
+  "ListenList": [
+    {
+      "Enable": true,
+      "Port": 22001,
+      "Protocol": "http"
+    },
+    {
+      "Enable": true,
+      "Port": 33001,
+      "Protocol": "https"
+    }
+  ],
+  "DatabaseURL": "{AES256}OGLzoeZqHv6YlXDPY0po-JHoNamXauZf-O2I22OP3oeVzksk-gy415deSdqrrID3HQoLZ4LNSkRhWxGwciyoqA==",
+  "RSAPubFile": "{BasePath}/key/rsa.pub",
+  "RSAKeyFile": "{BasePath}/key/rsa.key",
+  "HttpsCrtFile": "{BasePath}/pki/Server.crt",
+  "HttpsKeyFile": "{BasePath}/pki/Server.key",
+  "AESKey": "key",
+  "AESIV": "iv"
+}

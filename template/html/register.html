@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap-5.3.8.min.css">
+    <script type="text/javascript" src="/js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap-5.3.8.min.js"></script>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            margin: 0;
+        }
+
+        .register-container {
+            min-width: 400px;
+            max-width: 500px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="d-flex align-items-center justify-content-center vh-100">
+
+    <div class="register-container">
+        <h3 class="text-center mb-4">Register</h3>
+
+        <form id="register-form">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="nickname" class="form-label">Nickname</label>
+                <input type="text" class="form-control" id="nickname" name="nickname" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="number" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="number" name="number" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Register</button>
+        </form>
+
+        <div id="alert-box" class="alert alert-danger mt-3 d-none"></div>
+    </div>
+
+    <script>
+        $(function () {
+            function getQueryParam(key) {
+                const params = new URLSearchParams(window.location.search);
+                return params.get(key);
+            }
+
+            function getPrefixPath() {
+                const path = window.location.pathname;
+                const segments = path.split('/').filter(Boolean);
+                segments.pop();
+                return '/' + segments.join('/');
+            }
+            const urlBase = window.location.origin + getPrefixPath();
+
+            $('#register-form').submit(function (e) {
+                e.preventDefault();
+
+                const data = {
+                    data: {
+                        ID: $('#email').val(),
+                        Nickname: $('#nickname').val(),
+                        Username: $('#username').val(),
+                        Number: $('#number').val(),
+                        Email: $('#email').val(),
+                        Password: $('#password').val(),
+                    }
+                };
+
+                $.ajax({
+                    url: '/signup',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (res) {
+                        if (res.success) {
+                            const returnTo = getQueryParam("return_to") || `${urlBase}/login`;
+                            window.location.href = returnTo;
+                        } else {
+                            $('#alert-box').text("Registration failed").removeClass('d-none').show();
+                        }
+                    },
+                    error: function () {
+                        $('#alert-box').text("Service error").removeClass('d-none').show();
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

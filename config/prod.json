@@ -1,0 +1,21 @@
+{
+  "ListenList": [
+    {
+      "Enable": true,
+      "Port": 22001,
+      "Protocol": "http"
+    },
+    {
+      "Enable": true,
+      "Port": 33001,
+      "Protocol": "https"
+    }
+  ],
+  "DatabaseURL": "postgres://postgres:POSTGRES_PASSWORD@db:5432/alsdb",
+  "RSAPubFile": "/ssl/rsa.pub",
+  "RSAKeyFile": "/ssl/rsa.key",
+  "HttpsCrtFile": "/ssl/yanansworkshop.site.crt",
+  "HttpsKeyFile": "/ssl/yanansworkshop.site.key",
+  "AESKey": "AES_KEY",
+  "AESIV": "AES_IV"
+}
