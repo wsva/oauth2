@@ -124,7 +124,7 @@ func initGlobals() error {
 	}
 
 	codeMap = &CodeMap{
-		Map: make(map[string]*Code),
+		Map: make(map[string]*CodeInfo),
 	}
 
 	return nil

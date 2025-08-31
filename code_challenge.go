@@ -5,41 +5,32 @@ import (
 	"encoding/base64"
 	"strings"
 	"time"
-
-	wl_uuid "github.com/wsva/lib_go/uuid"
 )
 
-type Code struct {
-	Scope     string
-	ClientID  string
-	AccountID string
-	Challenge string
-	Code      string
-	ExpireAt  time.Time
+type CodeInfo struct {
+	Scope       string
+	ClientID    string
+	AccountID   string
+	Challenge   string
+	Code        string
+	ExpireAt    time.Time
+	ParentToken string // access_token of OAuth2
 }
 
 type CodeMap struct {
-	Map map[string]*Code
+	Map map[string]*CodeInfo
 }
 
-func (c *CodeMap) NewCode(scope, client_id, account_id, challenge string) string {
+func (c *CodeMap) Add(ci *CodeInfo) {
 	if c.Map == nil {
-		c.Map = make(map[string]*Code)
+		c.Map = make(map[string]*CodeInfo)
 	}
-	codeObj := &Code{
-		ClientID:  client_id,
-		AccountID: account_id,
-		Challenge: challenge,
-		Code:      wl_uuid.New(),
-		ExpireAt:  time.Now().Add(3 * time.Minute),
-	}
-	c.Map[codeObj.Code] = codeObj
-	return codeObj.Code
+	c.Map[ci.Code] = ci
 }
 
-func (c *CodeMap) VerifyChallenge(code, verifier string) (*Code, bool) {
+func (c *CodeMap) VerifyChallenge(code, verifier string) (*CodeInfo, bool) {
 	if c.Map == nil {
-		c.Map = make(map[string]*Code)
+		c.Map = make(map[string]*CodeInfo)
 	}
 	codeObj, ok := c.Map[code]
 	if !ok {

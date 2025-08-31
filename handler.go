@@ -10,6 +10,7 @@ import (
 
 	wl_http "github.com/wsva/lib_go/http"
 	wl_net "github.com/wsva/lib_go/net"
+	wl_uuid "github.com/wsva/lib_go/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -90,7 +91,7 @@ func handleSignIn(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 		return
 	}
 
-	clientID := "auth_service"
+	clientID := "wsva_oauth2"
 	claims := NewClaims(account.UserID, clientID)
 	accessToken, refreshToken, err := GenerateToken(privateKey, claims)
 	if loginAudit.Abnormal(account.UserID, realip) {
@@ -104,6 +105,7 @@ func handleSignIn(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 		ClientID:     clientID,
 		UserID:       account.UserID,
 		IP:           wl_net.GetIPFromRequest(r).String(),
+		Parent:       "",
 	}
 	err = dt.DBInsert(dbConfig)
 	if err != nil {
@@ -149,6 +151,7 @@ func handleToken(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 		ClientID:     codeObj.ClientID,
 		UserID:       codeObj.AccountID,
 		IP:           wl_net.GetIPFromRequest(r).String(),
+		Parent:       codeObj.ParentToken,
 	}
 	err = dt.DBInsert(dbConfig)
 	if err != nil {
@@ -179,8 +182,17 @@ func handleAuthorize(w http.ResponseWriter, r *http.Request, next http.HandlerFu
 
 	ai := CheckAuthorization(r, true)
 	if ai.Authorized {
-		code := codeMap.NewCode(scope, client_id, ai.Token.UserID, code_challenge)
-		http.Redirect(w, r, fmt.Sprintf("%s?code=%s&state=%v", redirect_uri, code, state), http.StatusFound)
+		ci := &CodeInfo{
+			Scope:       scope,
+			ClientID:    client_id,
+			AccountID:   ai.Token.UserID,
+			Challenge:   code_challenge,
+			Code:        wl_uuid.New(),
+			ExpireAt:    time.Now().Add(3 * time.Minute),
+			ParentToken: ai.Token.AccessToken,
+		}
+		codeMap.Add(ci)
+		http.Redirect(w, r, fmt.Sprintf("%s?code=%s&state=%v", redirect_uri, ci.Code, state), http.StatusFound)
 		return
 	}
 
@@ -244,15 +256,16 @@ func handleJwks(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 }
 
 func handleLogout(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	tokenString, err := ParseTokenFromRequest(r)
-	if err == nil {
-		(&Token{AccessToken: tokenString}).DBDelete(dbConfig)
+	tokenString, _ := ParseTokenFromRequest(r)
+	t := &Token{
+		AccessToken: tokenString,
+		UserID:      r.FormValue("user_id"),
+		IP:          wl_net.GetIPFromRequest(r).String(),
 	}
+	t.DBDelete(dbConfig)
 
 	DeleteCookieToken(w, "access_token")
 	DeleteCookieToken(w, "refresh_token")
-
-	wl_http.RespondSuccess(w)
 }
 
 func handleAccountUpdate(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {

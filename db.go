@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/lib/pq"
 	wl_db "github.com/wsva/lib_go_db"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -155,13 +156,14 @@ type Token struct {
 	ClientID     string
 	UserID       string
 	IP           string
+	Parent       string
 }
 
 func (t *Token) DBInsert(db *wl_db.Config) error {
 	switch db.Driver {
 	case wl_db.DriverPostgreSQL:
-		query := "INSERT INTO oauth2_token VALUES ($1, $2, $3, $4, $5)"
-		_, err := db.Exec(query, t.AccessToken, t.RefreshToken, t.ClientID, t.UserID, t.IP)
+		query := "INSERT INTO oauth2_token VALUES ($1, $2, $3, $4, $5, $6)"
+		_, err := db.Exec(query, t.AccessToken, t.RefreshToken, t.ClientID, t.UserID, t.IP, t.Parent)
 		return err
 	default:
 		return fmt.Errorf("invalid DBType %v", db.Driver)
@@ -171,8 +173,32 @@ func (t *Token) DBInsert(db *wl_db.Config) error {
 func (t *Token) DBDelete(db *wl_db.Config) error {
 	switch db.Driver {
 	case wl_db.DriverPostgreSQL:
-		query := "delete from oauth2_token where access_token=$1"
-		_, err := db.Exec(query, t.AccessToken)
+		query := "select access_token, parent from oauth2_token where access_token=$1 or (user_id=$2 and ip=$3)"
+		rows, err := db.Query(query, t.AccessToken, t.UserID, t.IP)
+		if err != nil {
+			fmt.Println("get relevant tokens error", *t)
+			return err
+		}
+		var tokens []string
+		for rows.Next() {
+			var f1, f2 sql.NullString
+			err = rows.Scan(&f1, &f2)
+			if err != nil {
+				fmt.Println("get relevant tokens error 2", *t)
+				return err
+			}
+			tokens = append(tokens, f1.String, f2.String)
+		}
+		rows.Close()
+		if len(tokens) == 0 {
+			fmt.Println("no relevant tokens found", *t)
+			return err
+		}
+		query = "delete from oauth2_token where access_token=ANY($1) or parent=ANY($1)"
+		_, err = db.Exec(query, pq.Array(tokens))
+		if err != nil {
+			fmt.Println("delete relevant token", *t)
+		}
 		return err
 	default:
 		return fmt.Errorf("invalid DBType %v", db.Driver)

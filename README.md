@@ -43,7 +43,8 @@ create table oauth2_token (
     refresh_token varchar(1000) not null,
     client_id     varchar(100)  not null,
     user_id       varchar(100)  not null,
-    ip            varchar(100)  not null
+    ip            varchar(100)  not null,
+    parent        varchar(1000)
 );
 
 create table oauth2_log (
