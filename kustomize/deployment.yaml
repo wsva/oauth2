@@ -2,9 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: oauth2
-  namespace: als
+  namespace: wsva
   annotations:
-    build: "20250831_122325"
+    build: "20251001_144210"
 spec:
   replicas: 1
   selector:
@@ -15,7 +15,7 @@ spec:
       labels:
         app: oauth2
       annotations:
-        build: "20250831_122325"
+        build: "20251001_144210"
     spec:
       containers:
         - name: oauth2
@@ -24,17 +24,17 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
+                  name: secrets
                   key: POSTGRES_PASSWORD
             - name: AES_KEY
               valueFrom:
                 secretKeyRef:
-                  name: aes-key
+                  name: secrets
                   key: AES_KEY
             - name: AES_IV
               valueFrom:
                 secretKeyRef:
-                  name: aes-iv
+                  name: secrets
                   key: AES_IV
           command:
             - sh
@@ -58,13 +58,13 @@ spec:
       volumes:
         - name: ssl
           hostPath:
-            path: /als/ssl
+            path: /wsva/ssl
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: oauth2
-  namespace: als
+  namespace: wsva
 spec:
   selector:
     app: oauth2
