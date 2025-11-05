@@ -93,7 +93,7 @@
                             const returnTo = getQueryParam("return_to") || '/oauth2/login';
                             window.location.href = returnTo;
                         } else {
-                            $('#alert-box').text("Registration failed").removeClass('d-none').show();
+                            $('#alert-box').text(res.errMsg).removeClass('d-none').show();
                         }
                     },
                     error: function () {
