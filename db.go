@@ -25,12 +25,30 @@ type Account struct {
 func (a *Account) DBInsert(db *wl_db.Config) error {
 	switch db.Driver {
 	case wl_db.DriverPostgreSQL:
-		query := "insert into oauth2_user values ($1, $2, $3, $4, $5, $6, $7, $8, $9)"
-		_, err := db.Exec(query, a.UserID, a.Nickname, a.Username, a.Number, a.Email, a.Password, "N", "N", "Y")
-		return err
+		query := "select is_active from oauth2_user a where a.user_id=$1 and a.is_active='Y'"
+		row, err := db.QueryRow(query, a.UserID)
+		if err != nil {
+			fmt.Println(err)
+			return fmt.Errorf("database error")
+		}
+		var f1 sql.NullString
+		err = row.Scan(&f1)
+		if err == nil {
+			fmt.Println("email registered:", a.UserID, ", is_active:", f1.String)
+			return fmt.Errorf("account with this email already exists")
+		}
+
+		query = "insert into oauth2_user values ($1, $2, $3, $4, $5, $6, $7, $8, $9)"
+		_, err = db.Exec(query, a.UserID, a.Nickname, a.Username, a.Number, a.Email, a.Password, "N", "N", "Y")
+		if err != nil {
+			fmt.Println(err)
+			return fmt.Errorf("database error")
+		}
 	default:
-		return fmt.Errorf("invalid DBType %v", db.Driver)
+		fmt.Println("invalid DBType:", db.Driver)
+		return fmt.Errorf("database error")
 	}
+	return nil
 }
 
 // will set user_id, nickname, email

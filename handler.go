@@ -17,6 +17,7 @@ import (
 func handleSignUp(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	req, err := wl_http.ParseRequest(r, 1024)
 	if err != nil {
+		fmt.Println(err)
 		wl_http.RespondError(w, "read error")
 		return
 	}
@@ -24,12 +25,14 @@ func handleSignUp(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	var account Account
 	err = json.Unmarshal(req.Data, &account)
 	if err != nil {
+		fmt.Println(err)
 		wl_http.RespondError(w, "unmarshal error")
 		return
 	}
 
 	hashedPasswd, err := bcrypt.GenerateFromPassword([]byte(account.Password), 10)
 	if err != nil {
+		fmt.Println(err)
 		wl_http.RespondError(w, "hash error")
 		return
 	}
@@ -42,7 +45,8 @@ func handleSignUp(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 
 	err = account.DBInsert(dbConfig)
 	if err != nil {
-		wl_http.RespondError(w, "database error")
+		fmt.Println(err)
+		wl_http.RespondError(w, err)
 		return
 	}
 
@@ -60,6 +64,7 @@ func handleSignIn(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	req, err := wl_http.ParseRequest(r, 1024)
 	if err != nil {
 		loginAudit.AddFailed("", realip)
+		fmt.Println(err)
 		wl_http.RespondError(w, "read error")
 		return
 	}
@@ -69,6 +74,7 @@ func handleSignIn(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	err = json.Unmarshal(req.Data, &account)
 	if err != nil {
 		loginAudit.AddFailed("", realip)
+		fmt.Println(err)
 		wl_http.RespondError(w, "unmarshal error")
 		return
 	}
@@ -82,6 +88,7 @@ func handleSignIn(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	err = account.Verify(dbConfig)
 	if err != nil {
 		loginAudit.AddFailed(account.UserID, realip)
+		fmt.Println(err)
 		wl_http.RespondError(w, err)
 		return
 	}
@@ -94,6 +101,11 @@ func handleSignIn(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	clientID := "wsva_oauth2"
 	claims := NewClaims(account.UserID, clientID)
 	accessToken, refreshToken, err := GenerateToken(privateKey, claims)
+	if err != nil {
+		fmt.Println(err)
+		wl_http.RespondError(w, "token error")
+		return
+	}
 	if loginAudit.Abnormal(account.UserID, realip) {
 		wl_http.RespondError(w, "token error")
 		return
@@ -109,6 +121,7 @@ func handleSignIn(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	}
 	err = dt.DBInsert(dbConfig)
 	if err != nil {
+		fmt.Println(err)
 		wl_http.RespondError(w, "database error")
 		return
 	}
@@ -141,6 +154,7 @@ func handleToken(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 	claims := NewClaims(codeObj.AccountID, codeObj.ClientID)
 	accessToken, refreshToken, err := GenerateToken(privateKey, claims)
 	if err != nil {
+		fmt.Println(err)
 		wl_http.RespondError(w, err)
 		return
 	}
@@ -155,6 +169,7 @@ func handleToken(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 	}
 	err = dt.DBInsert(dbConfig)
 	if err != nil {
+		fmt.Println(err)
 		wl_http.RespondError(w, "database error")
 		return
 	}
@@ -208,6 +223,7 @@ func handleRevoke(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	}
 	err := ai.Token.DBDelete(dbConfig)
 	if err != nil {
+		fmt.Println(err)
 		wl_http.RespondError(w, "revoke error")
 		return
 	}
@@ -277,12 +293,14 @@ func handleAccountUpdate(w http.ResponseWriter, r *http.Request, next http.Handl
 
 	req, err := wl_http.ParseRequest(r, 1024)
 	if err != nil {
+		fmt.Println(err)
 		wl_http.RespondError(w, err)
 		return
 	}
 	var account Account
 	err = json.Unmarshal(req.Data, &account)
 	if err != nil {
+		fmt.Println(err)
 		wl_http.RespondError(w, err)
 		return
 	}
@@ -368,6 +386,7 @@ func handleAccountAll(w http.ResponseWriter, r *http.Request, next http.HandlerF
 
 	list, err := QueryAccountAll(dbConfig)
 	if err != nil {
+		fmt.Println(err)
 		wl_http.RespondError(w, "database error")
 		return
 	}
