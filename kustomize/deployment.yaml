@@ -4,7 +4,7 @@ metadata:
   name: oauth2
   namespace: wsva
   annotations:
-    build: "20251105_172824"
+    build: "20251213_044338"
 spec:
   replicas: 1
   selector:
@@ -15,7 +15,7 @@ spec:
       labels:
         app: oauth2
       annotations:
-        build: "20251105_172824"
+        build: "20251213_044338"
     spec:
       containers:
         - name: oauth2
@@ -68,13 +68,11 @@ metadata:
 spec:
   selector:
     app: oauth2
-  type: NodePort
+  type: ClusterIP
   ports:
     - name: http
       port: 22001
       targetPort: 22001
-      nodePort: 22001
     - name: https
       port: 33001
       targetPort: 33001
-      nodePort: 33001
