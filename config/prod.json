@@ -14,8 +14,8 @@
   "DatabaseURL": "postgres://postgres:POSTGRES_PASSWORD@db:5432/fmsdb",
   "RSAPubFile": "/ssl/rsa.pub",
   "RSAKeyFile": "/ssl/rsa.key",
-  "HttpsCrtFile": "/ssl/yanansworkshop.site.crt",
-  "HttpsKeyFile": "/ssl/yanansworkshop.site.key",
+  "HttpsCrtFile": "/ssl/lusworkshop.site.crt",
+  "HttpsKeyFile": "/ssl/lusworkshop.site.key",
   "AESKey": "AES_KEY",
   "AESIV": "AES_IV"
 }
