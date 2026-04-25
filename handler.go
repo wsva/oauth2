@@ -194,6 +194,9 @@ func handleAuthorize(w http.ResponseWriter, r *http.Request, next http.HandlerFu
 	state := r.FormValue("state")
 	code_challenge := r.FormValue("code_challenge")
 	redirect_uri := r.FormValue("redirect_uri")
+	if redirect_uri == "" {
+		redirect_uri = r.FormValue("callbackURL")
+	}
 
 	ai := CheckAuthorization(r, true)
 	if ai.Authorized {
