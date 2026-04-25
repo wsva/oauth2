@@ -15,6 +15,7 @@ type CodeInfo struct {
 	Code        string
 	ExpireAt    time.Time
 	ParentToken string // access_token of OAuth2
+	State       string
 }
 
 type CodeMap struct {

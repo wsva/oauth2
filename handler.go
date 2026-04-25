@@ -208,6 +208,7 @@ func handleAuthorize(w http.ResponseWriter, r *http.Request, next http.HandlerFu
 			Code:        wl_uuid.New(),
 			ExpireAt:    time.Now().Add(3 * time.Minute),
 			ParentToken: ai.Token.AccessToken,
+			State:       state,
 		}
 		codeMap.Add(ci)
 		http.Redirect(w, r, fmt.Sprintf("%s?code=%s&state=%v", redirect_uri, ci.Code, state), http.StatusFound)
