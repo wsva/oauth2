@@ -5,91 +5,228 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link type="text/css" rel="stylesheet" href="/oauth2/css/bootstrap-5.3.8.min.css">
     <script type="text/javascript" src="/oauth2/js/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" src="/oauth2/js/bootstrap-5.3.8.min.js"></script>
     <script>
         setTimeout(function () { location.reload(); }, 60000);
     </script>
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            background-color: #f5f5f5;
-            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
         }
 
-        .dashboard-container {
-            max-width: 500px;
-            width: 90%; /* 手机端适应屏幕 */
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin: 20px auto; /* 与 Navbar 保持间距 */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            height: 56px;
+            background: rgba(0, 0, 0, 0.25);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            flex-shrink: 0;
         }
 
-        .title {
+        .nav-brand {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+        }
+
+        .btn-nav-logout {
+            padding: 0.4rem 1rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            letter-spacing: 0.01em;
+            transition: opacity 0.2s, transform 0.15s;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-nav-logout:hover  { opacity: 0.88; }
+        .btn-nav-logout:active { transform: scale(0.97); }
+
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1rem;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 20px;
+            padding: 2.5rem 2.75rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.08);
+            animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 16px;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.45);
+        }
+
+        .logo svg { width: 26px; height: 26px; fill: #fff; }
+
+        h1 {
             text-align: center;
-            margin-bottom: 25px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.35rem;
+            letter-spacing: -0.02em;
         }
 
-        .logout-btn {
-            margin-top: 20px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            min-width: 120px;
+        .subtitle {
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
         }
 
-        .user-info {
-            font-size: 16px;
+        .info-list {
+            list-style: none;
+            margin-bottom: 1.75rem;
+        }
+
+        .info-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            background: #f9fafb;
+            border: 1.5px solid #e5e7eb;
+            margin-bottom: 0.75rem;
+        }
+
+        .info-list li:last-child { margin-bottom: 0; }
+
+        .info-list .info-icon {
+            flex-shrink: 0;
+            width: 17px;
+            height: 17px;
+            color: #667eea;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #9ca3af;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            min-width: 4.5rem;
+        }
+
+        .info-value {
+            font-size: 0.9375rem;
+            color: #111827;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .alert {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand" href="#">OAuth2</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <button id="logout-btn" class="btn btn-danger ms-2">Logout</button>
-                    </li>
-                </ul>
-            </div>
-        </div>
+
+    <nav>
+        <a class="nav-brand" href="#">OAuth2</a>
+        <button id="logout-btn" class="btn-nav-logout">Sign Out</button>
     </nav>
 
-    <div class="dashboard-container">
-        <h3 class="title">Welcome</h3>
-
-        <div class="user-info">
-            <p><strong>Email:</strong> <span id="user-email">Loading...</span></p>
-            <p><strong>Nickname:</strong> <span id="user-nickname">Loading...</span></p>
+    <div class="main">
+    <div class="card">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2a5 5 0 1 0 0 10A5 5 0 0 0 12 2zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm-7 13v-1c0-3.31 5.37-5 7-5s7 1.69 7 5v1H5z"/>
+            </svg>
         </div>
+
+        <h1>Dashboard</h1>
+        <p class="subtitle">Your account overview</p>
+
+        <ul class="info-list">
+            <li>
+                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <span class="info-label">Email</span>
+                <span class="info-value" id="user-email">Loading…</span>
+            </li>
+            <li>
+                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span class="info-label">Nickname</span>
+                <span class="info-value" id="user-nickname">Loading…</span>
+            </li>
+        </ul>
+
+        <div id="alert-box" class="alert"></div>
+    </div>
     </div>
 
     <script>
         $(function () {
             $.getJSON('/oauth2/userinfo', function (data) {
-                $("#user-email").text(data.email);
-                $("#user-nickname").text(data.name);
+                $('#user-email').text(data.email);
+                $('#user-nickname').text(data.name);
             }).fail(function () {
-                $("#user-email").text("Failed to load");
+                $('#user-email').text('Failed to load');
+                $('#user-nickname').text('—');
             });
 
-            $('#logout-btn').click(function () {
+            $('#logout-btn').on('click', function () {
                 $.post('/oauth2/logout', function () {
                     window.location.href = '/oauth2/login';
                 }).fail(function () {
-                    alert("Logout failed");
+                    const box = document.getElementById('alert-box');
+                    box.textContent = 'Logout failed. Please try again.';
+                    box.style.display = 'block';
                 });
             });
         });
     </script>
+
 </body>
+
 </html>
