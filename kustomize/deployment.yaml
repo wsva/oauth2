@@ -4,7 +4,7 @@ metadata:
   name: oauth2
   namespace: wsva
   annotations:
-    build: "20260425_233733"
+    build: "20260426_161933"
 spec:
   replicas: 1
   selector:
@@ -15,7 +15,7 @@ spec:
       labels:
         app: oauth2
       annotations:
-        build: "20260425_233733"
+        build: "20260426_161933"
     spec:
       containers:
         - name: oauth2
